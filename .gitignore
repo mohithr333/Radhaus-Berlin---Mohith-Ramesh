@@ -1,0 +1,9 @@
+/node_modules
+/.next
+/out
+*.log
+next-env.d.ts
+
+# Generated example database (created by `npm run seed`)
+data/*.db
+tsconfig.tsbuildinfo

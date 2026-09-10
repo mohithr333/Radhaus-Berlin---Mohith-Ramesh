@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" width="320" height="200" role="img" aria-label="Frontscheinwerfer">
+  <rect width="320" height="200" fill="#e6e9f0"/>
+  <rect x="72" y="76" width="86" height="52" rx="12" fill="#48606f"/>
+  <circle cx="158" cy="102" r="26" fill="#f4f6f8" stroke="#1c2024" stroke-width="5"/>
+  <g stroke="#c9a227" stroke-width="6" stroke-linecap="round">
+    <line x1="196" y1="102" x2="248" y2="102"/>
+    <line x1="190" y1="80" x2="234" y2="60"/>
+    <line x1="190" y1="124" x2="234" y2="144"/>
+  </g>
+  <rect x="52" y="94" width="24" height="16" rx="5" fill="#1c2024"/>
+  <text x="16" y="182" font-family="system-ui, sans-serif" font-size="13" fill="#6b7280">Frontscheinwerfer ohne Funktion</text>
+</svg>

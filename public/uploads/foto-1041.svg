@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" width="320" height="200" role="img" aria-label="Rennrad, Schaltwerk">
+  <rect width="320" height="200" fill="#e8eef2"/>
+  <circle cx="92" cy="132" r="40" fill="none" stroke="#48606f" stroke-width="6"/>
+  <circle cx="228" cy="132" r="40" fill="none" stroke="#48606f" stroke-width="6"/>
+  <path d="M92 132 L140 68 L200 68 L228 132 L150 132 Z" fill="none" stroke="#1c2024" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M140 68 L124 52 L152 52" fill="none" stroke="#1c2024" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="150" cy="132" r="12" fill="none" stroke="#0f6b4f" stroke-width="5"/>
+  <text x="16" y="182" font-family="system-ui, sans-serif" font-size="13" fill="#6b7280">Schaltwerk, Kundenfoto</text>
+</svg>
