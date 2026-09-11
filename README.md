@@ -58,6 +58,24 @@ fictional** and belong to no real system.
 
 ---
 
+## Handing in
+
+At the end, please hand in your work as a **ZIP file named after you**, for
+example `radhaus-firstname-lastname.zip`. It should contain:
+
+- **D2 (the code):** the repository as you left it — please **keep the `.git`
+  folder** (we like to see how you worked with the agent) and include **your
+  rules file** (`AGENTS.md` / `CLAUDE.md` / `.cursor/rules`). You do **not** need
+  to include `node_modules` — `npm install` restores it.
+- **D2 notes:** the short list of what the agent got wrong and the one line on
+  what you deliberately left out.
+- **D0 and D1:** add your written D0 notes (a photo or scan is fine) and your
+  group's D1 matrix and findings, if you have them digitally.
+
+One ZIP per person, please.
+
+---
+
 *Your results remain your property. We use them solely to form an impression and
 not for our own product — which is why we deliberately work on an unrelated
 example.*
