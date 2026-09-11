@@ -27,7 +27,10 @@ db.exec(`
     passwort_hash TEXT NOT NULL,
     telefon       TEXT NOT NULL DEFAULT '',
     adresse       TEXT NOT NULL DEFAULT '',
-    rolle         TEXT NOT NULL DEFAULT 'kunde'
+    rolle         TEXT NOT NULL DEFAULT 'kunde',
+    -- Branch a staff member belongs to. NULL for customers and administration.
+    -- Workshop staff only ever see the appointments of their own branch.
+    filiale_id    INTEGER
   );
 
   CREATE TABLE termine (
@@ -50,6 +53,19 @@ db.exec(`
     leistung  TEXT NOT NULL,
     preis_eur TEXT NOT NULL
   );
+
+  -- Hard backstop for the business rule: a customer may have at most 3 open
+  -- appointments. This lives in the database so it holds even if a handler is
+  -- buggy or a request is hand-crafted. The API enforces it too (inside a
+  -- transaction), but this is the line that cannot be argued around.
+  CREATE TRIGGER max_offene_termine
+  BEFORE INSERT ON termine
+  WHEN NEW.status = 'offen'
+   AND (SELECT COUNT(*) FROM termine
+         WHERE kunde_id = NEW.kunde_id AND status = 'offen') >= 3
+  BEGIN
+    SELECT RAISE(ABORT, 'Maximal 3 offene Termine');
+  END;
 `)
 
 const filialen = [
@@ -63,16 +79,19 @@ for (const f of filialen) insertFiliale.run(...f)
 
 // All accounts below are fictional. The password hashes are placeholders -
 // this is an exercise environment, not a real system.
+// The last column is filiale_id: customers and administration have none (null);
+// the two workshop staff are each assigned to one branch (Tom -> Neukoelln,
+// Rita -> Wedding) so branch scoping can be demonstrated.
 const kunden = [
-  ['Mira Sandberg', 'mira.sandberg@example.org', 'hash$mira', '030 5512300', 'Weserstr. 8, 12047 Berlin', 'kunde'],
-  ['Jonas Kreft', 'jonas.kreft@example.org', 'hash$jonas', '030 5512301', 'Pankstr. 21, 13357 Berlin', 'kunde'],
-  ['Ayse Demirel', 'ayse.demirel@example.org', 'hash$ayse', '030 5512302', 'Hermannstr. 4, 12049 Berlin', 'kunde'],
-  ['Tom Baumgart', 'tom.baumgart@radhaus.local', 'hash$tom', '030 5512400', '', 'werkstatt'],
-  ['Rita Ohlsen', 'rita.ohlsen@radhaus.local', 'hash$rita', '030 5512401', '', 'werkstatt'],
-  ['Katrin Lubitz', 'katrin.lubitz@radhaus.local', 'hash$katrin', '030 5512500', '', 'verwaltung'],
+  ['Mira Sandberg', 'mira.sandberg@example.org', 'hash$mira', '030 5512300', 'Weserstr. 8, 12047 Berlin', 'kunde', null],
+  ['Jonas Kreft', 'jonas.kreft@example.org', 'hash$jonas', '030 5512301', 'Pankstr. 21, 13357 Berlin', 'kunde', null],
+  ['Ayse Demirel', 'ayse.demirel@example.org', 'hash$ayse', '030 5512302', 'Hermannstr. 4, 12049 Berlin', 'kunde', null],
+  ['Tom Baumgart', 'tom.baumgart@radhaus.local', 'hash$tom', '030 5512400', '', 'werkstatt', 1],
+  ['Rita Ohlsen', 'rita.ohlsen@radhaus.local', 'hash$rita', '030 5512401', '', 'werkstatt', 2],
+  ['Katrin Lubitz', 'katrin.lubitz@radhaus.local', 'hash$katrin', '030 5512500', '', 'verwaltung', null],
 ]
 const insertKunde = db.prepare(
-  'INSERT INTO kunden (name, email, passwort_hash, telefon, adresse, rolle) VALUES (?, ?, ?, ?, ?, ?)'
+  'INSERT INTO kunden (name, email, passwort_hash, telefon, adresse, rolle, filiale_id) VALUES (?, ?, ?, ?, ?, ?, ?)'
 )
 for (const k of kunden) insertKunde.run(...k)
 

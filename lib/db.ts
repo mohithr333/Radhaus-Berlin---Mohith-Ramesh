@@ -49,6 +49,24 @@ export function createClient() {
       const sql = `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${placeholders})`
       db.prepare(sql).run(...columns.map((c) => values[c]))
     },
+
+    /**
+     * Run `fn` inside a single atomic transaction. `fn` operates on the raw
+     * synchronous handle and must not await anything, so no other request can
+     * interleave between its statements. Used to make "count open, then insert"
+     * atomic for the 3-appointment limit. Rolls back on any throw.
+     */
+    transaction<T>(fn: (raw: DatabaseSync) => T): T {
+      db.exec('BEGIN IMMEDIATE')
+      try {
+        const result = fn(db)
+        db.exec('COMMIT')
+        return result
+      } catch (error) {
+        db.exec('ROLLBACK')
+        throw error
+      }
+    },
   }
 }
 

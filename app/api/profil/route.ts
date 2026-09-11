@@ -2,7 +2,9 @@
 import { createClient } from '@/lib/db'
 import { getKundeId } from '@/lib/session'
 
-const FELDER = ['name', 'email', 'telefon', 'adresse', 'rolle']
+// A customer may edit only their contact details. 'rolle' is deliberately NOT
+// here: role is an authorization fact, never self-editable from the client.
+const FELDER = ['name', 'email', 'telefon', 'adresse']
 
 export async function GET() {
   const kundeId = await getKundeId()
@@ -11,7 +13,11 @@ export async function GET() {
   }
 
   const db = createClient()
-  const profil = await db.first('select * from kunden where id = ?', [kundeId])
+  // Explicit column list - never return passwort_hash to the client.
+  const profil = await db.first(
+    'select id, name, email, telefon, adresse, rolle from kunden where id = ?',
+    [kundeId]
+  )
   return Response.json({ profil })
 }
 

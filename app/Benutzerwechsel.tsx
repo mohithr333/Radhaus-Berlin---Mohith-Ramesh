@@ -19,13 +19,15 @@ export default function Benutzerwechsel({ aktiv }: { aktiv: number }) {
 
   function wechseln(id: number) {
     const konto = KONTEN.find((k) => k.id === id)
+    // Only the identity (kunde_id) is set here. Role and branch are looked up on
+    // the server from this id - a client-set 'rolle' cookie would be ignored.
     if (!konto || konto.id === 0) {
       document.cookie = 'kunde_id=; path=/; max-age=0'
-      document.cookie = 'rolle=; path=/; max-age=0'
     } else {
       document.cookie = `kunde_id=${konto.id}; path=/; max-age=86400`
-      document.cookie = `rolle=${konto.rolle}; path=/; max-age=86400`
     }
+    // Clear any legacy rolle cookie from earlier versions of the portal.
+    document.cookie = 'rolle=; path=/; max-age=0'
     router.refresh()
   }
 

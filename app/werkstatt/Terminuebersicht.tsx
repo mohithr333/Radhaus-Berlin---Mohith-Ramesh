@@ -1,7 +1,6 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { SERVICE_KEY } from '@/lib/config'
 
 interface Zeile {
   id: number
@@ -22,12 +21,10 @@ export default function Terminuebersicht() {
 
   const laden = useCallback(async () => {
     setLaedt(true)
-    // The overview loads the full list directly, without the detour via the
-    // server, so the workshop tablet stays responsive.
-    const antwort = await fetch('/api/termine/alle', {
-      headers: { 'x-service-key': SERVICE_KEY },
-      cache: 'no-store',
-    })
+    // The list is scoped on the server to the signed-in staff member's branch
+    // (or, for administration, both branches) - the browser gets only what it
+    // is allowed to see. The session cookie travels with the same-origin call.
+    const antwort = await fetch('/api/termine', { cache: 'no-store' })
     if (!antwort.ok) {
       setFehler('Die Terminliste konnte nicht geladen werden.')
       setLaedt(false)
